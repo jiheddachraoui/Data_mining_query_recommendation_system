@@ -1,6 +1,7 @@
 import random
 import csv
 import time
+import pandas as pd
 
 def to_csv(filename, data,header=None):
   with open("./csv/" + filename + ".csv", 'w+', newline='') as file:
@@ -72,3 +73,51 @@ print("Users set created ")
 
 ####################################################################################
 
+
+
+dataset= pd.read_csv("csv\dataset.csv")
+D=[]
+while len(D) < nbr_queries:
+    
+    queryID = "Q" + str(len(D) + 1)
+
+    randomName, randomAddress, randomAge, randomOccupation = None, None, None, None #attributes that haven't been picked yet
+    query = []
+    age = str(random.randint(min, max))
+    
+    if random.randint(0, 1) == 1:#try to pick name for query
+      randomName='name=="' + random.choice(names)+ '"'
+      query.append('name=="' + random.choice(names)+ '"')
+    if random.randint(0, 1) == 1:
+      randomAddress='address=="' + random.choice(adresses)+ '"'
+      query.append('address=="' + random.choice(adresses)+ '"')
+    if random.randint(0, 1) == 1:  
+      randomAge='age=="' + random.choice(age)+ '"'
+      query.append('age=="' + random.choice(age)+ '"')
+      
+    if random.randint(0, 1) == 1:
+      randomOccupation='occupation=="' + random.choice(occupations)+ '"'
+      query.append('occupation=="' + random.choice(occupations)+ '"')
+    
+    item= [queryID,randomName,randomAge,randomOccupation,randomAddress]
+        #query = [queryID,"name="+random.choice(names),"age="+age,"occupation="+random.choice(occupations), "address="+random.choice(adresses)]
+    #print(query)
+    if (randomName == None and randomAddress == None and randomAge == None and randomOccupation == None):
+      continue
+    else:
+      D.append(item)
+      """query = " and ".join(query)
+      
+      filteredDataset = dataset.query(query)
+      print(filteredDataset.index.values)
+      if len(filteredDataset.index.values) > 0:
+        D.append(item)
+        
+        
+      else:
+        continue
+      """
+#print(D)
+to_csv("queries", D)
+
+print("Queries set created ")
