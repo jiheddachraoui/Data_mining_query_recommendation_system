@@ -1,17 +1,6 @@
 import random
-import csv
-import time
 import pandas as pd
-
-def to_csv(filename, data,header=None):
-  with open("./csv/" + filename + ".csv", 'w+', newline='') as file:
-    writer = csv.writer(file)
-
-    if header is not None:
-      writer.writerow(header)
-
-    writer.writerows(data)
-
+import numpy as np
 
 def list(file):
     # open file with names
@@ -57,7 +46,7 @@ for i in range(data_size):
 
 
 datadf=pd.DataFrame(data,columns=["name", "age","occupation","address"])
-datadf.to_csv('dataset')
+datadf.to_csv('./csv/dataset.csv',index=False)
 
 print("Dataset created ")
 
@@ -101,3 +90,19 @@ queries=pd.DataFrame(queries, columns =['queryID','query'])
 queries.to_csv('./csv/queries.csv',index=False)
 
 print("Queries set created ")
+
+######################################################################################
+
+
+
+MIN_VOTE, MAX_VOTE = 1, 100
+queries=pd.read_csv("./csv/queries.csv",index_col=False)
+queriesIDs=queries['queryID'].values.tolist()
+users = pd.read_csv("./csv/users.csv",index_col=False)
+users=users['Used_Id'].values.tolist()
+randomScores = np.random.randint(low=MIN_VOTE, high=MAX_VOTE, size=( len(users), len(queriesIDs))).astype(str)
+mask = np.random.randint(0, 3, size=randomScores.shape).astype(bool)
+randomScores[np.logical_not(mask)] = ""
+randomScoresdf=pd.DataFrame(randomScores,columns=queriesIDs,index=users)
+randomScoresdf.to_csv("./csv/utility_matrix.csv")
+print("Partial utility matrix created and saved in /csv/utility_matrix.csv")
