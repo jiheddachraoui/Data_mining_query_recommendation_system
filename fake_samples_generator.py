@@ -1,15 +1,16 @@
 
 from faker import Faker
 fake = Faker()
+fake_it = Faker('it_IT')
 
 
 name=[]
 city=[]
 occupation=[]
-for i in range(1000):
+for i in range(200):
   job=fake.job()
-  city_name=fake.address()
-  Name=fake.name()
+  city_name=fake.city(country_code='it')
+  Name=fake_it.first_name()
   name.append(Name)
   city.append(city_name)
   occupation.append(job)
@@ -46,5 +47,4 @@ with open('data/occupation.txt', 'w+') as e:
          #writing to file line by line
         element=element.replace(',', '')
         e.write('%s\n' % element)
-        
     

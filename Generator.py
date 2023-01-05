@@ -92,9 +92,10 @@ while len(D) < nbr_queries:
     if random.randint(0, 1) == 1:
       randomAddress='address=="' + random.choice(adresses)+ '"'
       query.append('address=="' + random.choice(adresses)+ '"')
-    if random.randint(0, 1) == 1:  
-      randomAge='age=="' + random.choice(age)+ '"'
-      query.append('age=="' + random.choice(age)+ '"')
+    if random.randint(0, 1) == 1:   
+      randomAge=age
+      randomAge='age=="' +randomAge + '"'
+      query.append('age=="' + randomAge + '"')
       
     if random.randint(0, 1) == 1:
       randomOccupation='occupation=="' + random.choice(occupations)+ '"'
