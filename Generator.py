@@ -2,6 +2,7 @@ import random
 import csv
 import time
 import pandas as pd
+import numpy as np
 
 def to_csv(filename, data,header=None):
   with open("./csv/" + filename + ".csv", 'w+', newline='') as file:
@@ -36,11 +37,11 @@ file = "data/occupation.txt"
 occupations = name_array(file)
 
 
-min=18
+min=15
 max=60
-nbr_users=2000
-data_size=2000
-nbr_queries=2000
+nbr_users=3000
+data_size=3000
+nbr_queries=3000
 
 def random_profile(i):
     age = random.randint(min, max)
@@ -106,18 +107,53 @@ while len(D) < nbr_queries:
       continue
     else:
       D.append(item)
-      """query = " and ".join(query)
-      
-      filteredDataset = dataset.query(query)
-      print(filteredDataset.index.values)
-      if len(filteredDataset.index.values) > 0:
-        D.append(item)
-        
-        
-      else:
-        continue
-      """
-#print(D)
 to_csv("queries", D)
 
 print("Queries set created ")
+
+######################################################################################
+
+
+MIN_VOTE, MAX_VOTE = 1, 100
+def parse_queries(path: str):
+    # Initialize empty lists to store data and indexes
+    data = []
+    indexes = ["User/Query"]
+
+    # Open the file and read each row
+    with open(path) as f:
+        for row in f:
+            # Strip newline character and split row into values
+            values = row.rstrip('\n').split(',')
+            # Append first value to indexes list
+            indexes.append(values[0])
+            # Append remaining values to data list
+            
+            data.append(values[1:])
+    
+    # Convert data list to NumPy array and transpose
+    data = np.array(data).T
+    
+    # Create a DataFrame from the transposed array using allowed_features as column names
+    df = pd.DataFrame(data)
+    #print(data.shape)
+    # Return the DataFrame and the indexes list
+    return df, indexes
+
+print("Generating partial utility matrix...")
+users = pd.read_csv("./csv/users.csv",header=None)
+
+queries, queriesIDs = parse_queries("./csv/queries.csv")
+#print(queries, queriesIDs)
+randomScores = np.random.randint(low=MIN_VOTE, high=MAX_VOTE, size=( len(users), len(queriesIDs))).astype('O')
+
+print("random scores generated")
+mask = np.random.randint(0, 4, size=randomScores.shape).astype(bool)
+print("mask generated")
+randomScores[np.logical_not(mask)] = ""
+
+print("mask applied")
+randomScores = np.concatenate((users, randomScores), axis=1)
+print(randomScores)
+to_csv("utility_matrix", randomScores, queriesIDs)
+print("Partial utility matrix created and saved in /csv/utility_matrix.csv")

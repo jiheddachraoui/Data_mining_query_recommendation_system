@@ -6,7 +6,7 @@ fake = Faker()
 name=[]
 city=[]
 occupation=[]
-for i in range(5000):
+for i in range(1000):
   job=fake.job()
   city_name=fake.address()
   Name=fake.name()
@@ -44,5 +44,7 @@ with open('data/occupation.txt', 'w+') as e:
     for element in occupation:
  
          #writing to file line by line
- 
+        element=element.replace(',', '')
         e.write('%s\n' % element)
+        
+    
