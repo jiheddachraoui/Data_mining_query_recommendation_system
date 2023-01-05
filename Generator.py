@@ -13,8 +13,7 @@ def to_csv(filename, data,header=None):
     writer.writerows(data)
 
 
-random.seed(time.time())
-def name_array(file):
+def list(file):
     # open file with names
     with open(file) as fp:
         new_list = []
@@ -27,97 +26,78 @@ def name_array(file):
 # call the function three times to transform names from each
 # file into arrays 
 file = "data/names.txt"
-names = name_array(file)
+names = list(file)
 
-file = "data/adresses.txt"
-adresses = name_array(file)
+file = "data/cities.txt"
+cities = list(file)
 
 file = "data/occupation.txt"
-occupations = name_array(file)
+jobs = list(file)
 
 
-min=18
-max=60
+min=19
+max=65
 nbr_users=2000
 data_size=2000
 nbr_queries=2000
 
-def random_profile(i):
+def random_profile():
     age = random.randint(min, max)
     # randomly choose a profile
-    item = [i+1,random.choice(names),age,random.choice(occupations), random.choice(adresses)]
+    item = [random.choice(names),age,random.choice(jobs), random.choice(cities)]
     return item
 
 data=[]
 
 
 for i in range(data_size):
-  data.append(random_profile(i))
+  data.append(random_profile())
 
-data
 
-to_csv("dataset",data,["id", "name", "age" , "occupation","address"])
+
+
+datadf=pd.DataFrame(data,columns=["name", "age","occupation","address"])
+datadf.to_csv('dataset')
+
 print("Dataset created ")
 
 ##########################
-data = []
+users = []
 for i in range(nbr_users):
 		user = "U" + str(i+1)
-		data.append(user)
+		users.append(user)
 
-with open("./csv/users.csv", "w+") as file:
-		for user in data:
-			file.write("%s\n" % user)
+usersdf=pd.DataFrame(users,columns=['Used_Id'])
+usersdf.to_csv("./csv/users.csv",index=False)
 
 print("Users set created ")
 
 ####################################################################################
-
-
-
-dataset= pd.read_csv("csv\dataset.csv")
-D=[]
-while len(D) < nbr_queries:
+queries=[]
+d=0
+while d < nbr_queries:
     
-    queryID = "Q" + str(len(D) + 1)
-
-    randomName, randomAddress, randomAge, randomOccupation = None, None, None, None #attributes that haven't been picked yet
-    query = []
-    age = str(random.randint(min, max))
+    queryID = "Q" + str(d + 1)
+    query = ''
     
     if random.randint(0, 1) == 1:#try to pick name for query
-      randomName='name=="' + random.choice(names)+ '"'
-      query.append('name=="' + random.choice(names)+ '"')
+      if len(query)>0: query+=','
+      query+=('name=' + random.choice(names))
     if random.randint(0, 1) == 1:
-      randomAddress='address=="' + random.choice(adresses)+ '"'
-      query.append('address=="' + random.choice(adresses)+ '"')
-    if random.randint(0, 1) == 1:  
-      randomAge='age=="' + random.choice(age)+ '"'
-      query.append('age=="' + random.choice(age)+ '"')
-      
+      if len(query)>0: query+=','
+      query+=('city=' + random.choice(cities))
     if random.randint(0, 1) == 1:
-      randomOccupation='occupation=="' + random.choice(occupations)+ '"'
-      query.append('occupation=="' + random.choice(occupations)+ '"')
+      if len(query)>0: query+=','
+      query+=('age=' + str(random.randint(19, 65)))
+    if random.randint(0, 1) == 1:
+      if len(query)>0: query+=','
+      query+=('job=' + random.choice(jobs))
     
-    item= [queryID,randomName,randomAge,randomOccupation,randomAddress]
-        #query = [queryID,"name="+random.choice(names),"age="+age,"occupation="+random.choice(occupations), "address="+random.choice(adresses)]
-    #print(query)
-    if (randomName == None and randomAddress == None and randomAge == None and randomOccupation == None):
-      continue
-    else:
-      D.append(item)
-      """query = " and ".join(query)
-      
-      filteredDataset = dataset.query(query)
-      print(filteredDataset.index.values)
-      if len(filteredDataset.index.values) > 0:
-        D.append(item)
-        
-        
-      else:
-        continue
-      """
-#print(D)
-to_csv("queries", D)
+    if len(query)>0:
+      queries.append({"queryID":queryID,"query":query})
+      d+=1
+
+queries=pd.DataFrame(queries, columns =['queryID','query'])
+queries.to_csv('./csv/queries.csv',index=False)
 
 print("Queries set created ")
