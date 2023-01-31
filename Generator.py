@@ -91,18 +91,3 @@ queries.to_csv('./csv/queries.csv',index=False)
 
 print("Queries set created ")
 
-######################################################################################
-
-
-
-MIN_VOTE, MAX_VOTE = 1, 100
-queries=pd.read_csv("./csv/queries.csv",index_col=False)
-queriesIDs=queries['queryID'].values.tolist()
-users = pd.read_csv("./csv/users.csv",index_col=False)
-users=users['Used_Id'].values.tolist()
-randomScores = np.random.randint(low=MIN_VOTE, high=MAX_VOTE, size=( len(users), len(queriesIDs))).astype(str)
-mask = np.random.randint(0, 3, size=randomScores.shape).astype(bool)
-randomScores[np.logical_not(mask)] = ""
-randomScoresdf=pd.DataFrame(randomScores,columns=queriesIDs,index=users)
-randomScoresdf.to_csv("./csv/utility_matrix.csv")
-print("Partial utility matrix created and saved in /csv/utility_matrix.csv")
